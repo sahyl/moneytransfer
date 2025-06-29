@@ -13,9 +13,6 @@ export const authOptions:NextAuthOptions= {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  pages:{
-    signIn:"/"
-  },
   callbacks: {
     async jwt({token , user}){
         if (user){
@@ -29,7 +26,20 @@ export const authOptions:NextAuthOptions= {
       }
       return session;
     },
+    
   },
+  events:{
+    async createUser ({user}) {
+      await prisma.bankAccount.create({
+        data:{
+          userId:user.id,
+          balance:500
+        }
+
+      })
+      
+    }
+  }
 };
 
 const handler = NextAuth(authOptions)
